@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin • LR Monitor</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="wa-container">
+      <!-- TOP BAR -->
+      <div class="wa-header admin-top">
+        <button onclick="showChats()" class="tab-btn">
+          <i class="fa-solid fa-comments"></i> Chats
+        </button>
+
+        <button onclick="showLive()" class="tab-btn">
+          <i class="fa-solid fa-bolt"></i> Live PDFs
+        </button>
+
+        <!-- 🔥 NEW -->
+        <button onclick="showReport()" class="tab-btn">
+          <i class="fa-solid fa-chart-column"></i> View Report
+        </button>
+      </div>
+
+      <!-- LEFT PANEL -->
+      <div class="wa-sidebar">
+        <div id="usersList"></div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="wa-chat">
+        <div id="adminChat" class="wa-chat-body"></div>
+      </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
