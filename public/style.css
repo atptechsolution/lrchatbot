@@ -756,3 +756,230 @@ body {
     width: 100%;
   }
 }
+/* =================================================
+   MOBILE SCALE UP – BIGGER FONTS & BOXES
+================================================= */
+@media (max-width: 768px) {
+  /* ---------- GLOBAL TEXT ---------- */
+  body {
+    font-size: 16px; /* base font bada */
+  }
+
+  h3 {
+    font-size: 22px;
+  }
+
+  /* ---------- ADMIN TOP TABS ---------- */
+  .admin-top .tab-btn {
+    font-size: 15px;
+    padding: 14px 0; /* 🔥 tall buttons */
+    border-radius: 12px;
+  }
+
+  /* ---------- USER CHAT CARDS ---------- */
+  .user-card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .user-card .avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 18px;
+  }
+
+  .user-info strong {
+    font-size: 16px;
+  }
+
+  .user-info small {
+    font-size: 14px;
+  }
+
+  /* ---------- DROPDOWNS & ICONS ---------- */
+  .template-dd {
+    font-size: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .user-card .icon {
+    padding: 10px;
+    font-size: 16px;
+  }
+
+  /* ---------- REPORT FILTERS ---------- */
+  .report-filters {
+    padding: 20px;
+    gap: 14px;
+  }
+
+  .report-filters select,
+  .report-filters input {
+    font-size: 16px;
+    padding: 14px 16px;
+    min-width: 100%;
+    border-radius: 12px;
+  }
+
+  .report-filters button {
+    font-size: 16px;
+    padding: 14px;
+    border-radius: 14px;
+    width: 100%;
+  }
+
+  /* ---------- REPORT TABLE ---------- */
+  .report-table th {
+    font-size: 15px;
+    padding: 14px;
+  }
+
+  .report-table td {
+    font-size: 15px;
+    padding: 14px;
+  }
+
+  /* ---------- CHAT SCREEN ---------- */
+  .msg {
+    font-size: 16px;
+    padding: 12px 14px;
+  }
+
+  .wa-input input {
+    font-size: 16px;
+    padding: 14px 16px;
+  }
+
+  .wa-input button {
+    width: 50px;
+    height: 50px;
+    font-size: 18px;
+  }
+}
+/* =================================================
+   🔥 HARD MOBILE OVERRIDE – FORCE BIG UI
+================================================= */
+@media (max-width: 768px) {
+  /* ---------- ROOT SCALE ---------- */
+  html {
+    font-size: 18px !important; /* 🔥 sab kuch bada */
+  }
+
+  body {
+    font-size: 18px !important;
+  }
+
+  /* ---------- ADMIN TOP TABS ---------- */
+  .admin-top .tab-btn {
+    font-size: 17px !important;
+    padding: 16px 0 !important;
+    border-radius: 14px !important;
+  }
+
+  /* ---------- USER LIST / CHAT CARDS ---------- */
+  .user-card {
+    width: 100% !important;
+    padding: 18px !important;
+    gap: 16px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .user-card .avatar {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 20px !important;
+  }
+
+  .user-info strong {
+    font-size: 18px !important;
+  }
+
+  .user-info small {
+    font-size: 15px !important;
+  }
+
+  .template-dd {
+    font-size: 16px !important;
+    padding: 12px 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .user-card .icon {
+    font-size: 18px !important;
+    padding: 12px !important;
+  }
+
+  /* ---------- REPORTS FILTERS ---------- */
+  .report-filters {
+    padding: 24px !important;
+    gap: 16px !important;
+  }
+
+  .report-filters select,
+  .report-filters input {
+    font-size: 18px !important;
+    padding: 16px 18px !important;
+    min-width: 100% !important;
+    border-radius: 14px !important;
+  }
+
+  .report-filters button {
+    font-size: 18px !important;
+    padding: 16px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+  }
+
+  /* ---------- REPORT TABLE ---------- */
+  .report-table th,
+  .report-table td {
+    font-size: 16px !important;
+    padding: 16px !important;
+  }
+
+  /* ---------- CHAT SCREEN ---------- */
+  .msg {
+    font-size: 18px !important;
+    padding: 14px 16px !important;
+  }
+
+  .wa-input input {
+    font-size: 18px !important;
+    padding: 16px 18px !important;
+  }
+
+  .wa-input button {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 20px !important;
+  }
+}
+/* =================================================
+   🔥 FIX: REPORT FILTERS HIDING ON MOBILE
+   (NO OTHER CSS CHANGE)
+================================================= */
+@media (max-width: 768px) {
+  .report-filters {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .report-filters > * {
+    display: block !important;
+    width: 100% !important;
+    visibility: visible !important;
+  }
+}
+/* =================================================
+   FIX: SHOW REPORTS ON MOBILE
+   (DO NOT CHANGE ANYTHING ELSE)
+================================================= */
+@media (max-width: 768px) {
+  .wa-chat {
+    display: flex !important; /* 🔥 report ke liye visible */
+    flex-direction: column;
+  }
+}
