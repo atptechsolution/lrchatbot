@@ -13,6 +13,13 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   font-family: "Segoe UI", Arial, Helvetica, sans-serif;
@@ -22,14 +29,16 @@ body {
 
 /* ================= AUTH PAGES ================= */
 .auth-wrapper {
-  height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 12px;
 }
 
 .auth-box {
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
@@ -88,13 +97,13 @@ body {
 
 /* ================= CHAT CONTAINER ================= */
 .wa-container {
-  width: 420px;
-  height: 90vh;
-  margin: 20px auto;
+  width: 100%;
+  max-width: 420px;
+  height: 100dvh;
+  margin: 0 auto;
   background: #fff;
   display: flex;
   flex-direction: column;
-  border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
@@ -107,6 +116,7 @@ body {
   align-items: center;
   padding: 10px 12px;
   gap: 10px;
+  flex-shrink: 0;
 }
 
 .wa-avatar {
@@ -135,11 +145,12 @@ body {
   padding: 12px;
   overflow-y: auto;
   background: var(--wa-bg);
+  padding-bottom: 8px;
 }
 
 /* ================= MESSAGE BUBBLES ================= */
 .msg {
-  max-width: 75%;
+  max-width: 85%;
   padding: 8px 12px;
   margin-bottom: 8px;
   border-radius: 8px;
@@ -166,6 +177,7 @@ body {
   display: flex;
   padding: 10px;
   background: #f0f0f0;
+  flex-shrink: 0;
 }
 
 .wa-input input {
@@ -188,7 +200,7 @@ body {
   cursor: pointer;
 }
 
-/* ================= ADMIN LAYOUT ================= */
+/* ================= ADMIN ================= */
 .admin-top {
   justify-content: flex-start;
 }
@@ -203,13 +215,10 @@ body {
   font-size: 13px;
 }
 
-.tab-btn:hover {
-  background: #0f7a6c;
-}
-
 /* ================= SIDEBAR ================= */
 .wa-sidebar {
-  width: 320px;
+  width: 100%;
+  max-width: 100%;
   background: #fff;
   border-right: 1px solid var(--wa-border);
   overflow-y: auto;
@@ -224,14 +233,9 @@ body {
   border-bottom: 1px solid #f1f1f1;
 }
 
-.user-card:hover {
-  background: #f5f6f6;
-}
-
 .user-info {
   display: flex;
   gap: 8px;
-  cursor: pointer;
   flex: 1;
 }
 
@@ -247,50 +251,9 @@ body {
   font-weight: bold;
 }
 
-/* ================= ICON BUTTONS ================= */
-.user-card button {
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.icon.approve,
-.icon.danger {
-  width: 26px;
-  height: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-}
-
-.icon.approve {
-  color: var(--wa-accent);
-}
-
-.icon.approve:hover {
-  background: rgba(37, 211, 102, 0.15);
-}
-
-.icon.danger {
-  color: #ff4d4f;
-}
-
-.icon.danger:hover {
-  background: rgba(255, 77, 79, 0.15);
-}
-
-/* ================= TEMPLATE DROPDOWN ================= */
-.user-card select {
-  font-size: 11px;
-  height: 22px;
-  padding: 2px 4px;
-  border-radius: 4px;
-}
-
-/* ================= ADMIN CHAT ================= */
+/* ================= ADMIN MSG ================= */
 .admin-msg {
+  position: relative;
   background: #fff;
   border-radius: 8px;
   padding: 10px;
@@ -298,77 +261,43 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.admin-msg .text {
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-/* ================= PDF PREVIEW ================= */
-.pdf-preview {
-  margin-top: 6px;
-  height: 130px;
-  border: 1px solid var(--wa-border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.pdf-preview iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* ================= REPORT BAR ================= */
-.report-bar {
-  margin-left: auto;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.report-bar select,
-.report-bar input {
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  border: none;
-}
-
-.export-all {
-  background: var(--wa-accent);
-  color: #fff;
-}
-
-.export-all:hover {
-  background: #1da851;
-}
-/* ================= EXPORT BUTTON FIX (FINAL) ================= */
-
-.admin-msg {
-  position: relative;
-}
-
 .admin-msg .export-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   position: absolute;
   top: 8px;
   right: 8px;
   font-size: 11px;
   padding: 4px 8px;
-  background: #25d366;
+  background: var(--wa-accent);
   color: #fff;
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  z-index: 10;
 }
 
-.admin-msg .export-btn i {
-  font-size: 11px;
-}
+/* ================= MOBILE ONLY ================= */
+@media (max-width: 480px) {
+  .wa-header {
+    padding: 8px 10px;
+  }
 
-.admin-msg .export-btn:hover {
-  background: #1da851;
+  .wa-input {
+    padding: 8px;
+  }
+
+  .wa-input input {
+    font-size: 13px;
+  }
+
+  .msg {
+    font-size: 13px;
+    max-width: 90%;
+  }
+
+  .user-card {
+    padding: 8px;
+  }
+
+  .admin-msg {
+    padding: 8px;
+  }
 }
