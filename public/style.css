@@ -437,3 +437,211 @@ body {
   overflow-x: auto;
   white-space: nowrap;
 }
+/* =================================================
+   CHATS TAB – PROPER SPLIT VIEW (DESKTOP + MOBILE)
+================================================= */
+
+/* When Chats mode is active */
+.wa-container {
+  position: relative;
+}
+
+/* Sidebar (user list) */
+.wa-sidebar {
+  width: 320px; /* 🔥 WhatsApp-like width */
+  max-width: 100%;
+  background: #fff;
+  border-right: 1px solid #e5e5e5;
+  overflow-y: auto;
+}
+
+/* Right chat panel */
+.wa-chat {
+  flex: 1;
+  background: var(--wa-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Empty state center */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 14px;
+  text-align: center;
+  gap: 8px;
+}
+
+.empty-state i {
+  font-size: 28px;
+  opacity: 0.5;
+}
+
+/* User card spacing fix */
+.user-card {
+  padding: 12px 14px;
+}
+
+/* =================================================
+   MOBILE – STACKED VIEW (WhatsApp style)
+================================================= */
+@media (max-width: 768px) {
+  .wa-sidebar {
+    width: 100%;
+    border-right: none;
+  }
+
+  .wa-chat {
+    display: none; /* 🔥 chat hidden until user selected */
+  }
+
+  /* When user opens a chat, sidebar is hidden via JS already */
+}
+/* =================================================
+   CHATS LIST – CLEAR, SEPARATED, SMART LAYOUT
+================================================= */
+
+/* Each chat = proper card */
+.user-card {
+  background: #fff;
+  margin: 8px 10px;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* LEFT SIDE: Avatar + details */
+.user-info {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Avatar */
+.user-card .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--wa-green);
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Name + mobile */
+.user-info strong {
+  font-size: 14px;
+  display: block;
+}
+
+.user-info small {
+  font-size: 12px;
+  color: #666;
+}
+
+/* RIGHT SIDE: actions */
+.user-card > .icon,
+.user-card > .template-dd {
+  margin-left: auto;
+}
+
+/* Template dropdown */
+.template-dd {
+  font-size: 12px;
+  padding: 5px 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+}
+
+/* Action icons */
+.user-card .icon {
+  border: none;
+  background: #f2f2f2;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s ease;
+}
+
+.user-card .icon:hover {
+  background: #e0e0e0;
+}
+
+/* Approve / delete colors */
+.user-card .approve {
+  color: #2ecc71;
+}
+
+.user-card .danger {
+  color: #e74c3c;
+}
+
+/* =================================================
+   MOBILE – EVEN MORE CLEAR
+================================================= */
+@media (max-width: 600px) {
+  .user-card {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .user-card .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .template-dd {
+    font-size: 11px;
+  }
+}
+/* =================================================
+   FIX: CHAT CARD FULL WIDTH (LEFT ISSUE SOLVED)
+================================================= */
+
+/* Sidebar ko full width ensure */
+.wa-sidebar {
+  width: 100%;
+  padding: 0; /* 🔥 gap hatao */
+}
+
+/* User card = FULL WIDTH */
+.user-card {
+  width: calc(100% - 16px); /* 🔥 full width minus margin */
+  margin: 8px; /* equal spacing all sides */
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+/* Make sure left section expands */
+.user-info {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Right side controls stay right */
+.user-card .template-dd,
+.user-card .icon {
+  flex-shrink: 0;
+}
