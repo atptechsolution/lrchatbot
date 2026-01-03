@@ -1,68 +1,77 @@
-/* ================= ROOT / THEME ================= */
-:root {
-  --wa-green: #075e54;
-  --wa-green-light: #128c7e;
-  --wa-accent: #25d366;
-  --wa-bg: #ece5dd;
-  --wa-light: #dcf8c6;
-  --wa-border: #e0e0e0;
-  --wa-text-muted: #667781;
-}
-
-* {
+/* =================================================
+   RESET
+================================================= */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html,
 body {
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
   overflow-x: hidden;
 }
 
 body {
-  margin: 0;
-  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-  background: var(--wa-bg);
-  color: #111;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #ece5dd;
 }
 
-/* ================= AUTH PAGES ================= */
+/* =================================================
+   THEME
+================================================= */
+:root {
+  --wa-green: #075e54;
+  --wa-green-dark: #054640;
+  --wa-accent: #25d366;
+  --wa-bg: #ece5dd;
+  --wa-light: #dcf8c6;
+  --wa-border: #e0e0e0;
+}
+
+/* =================================================
+   AUTH (LOGIN / SIGNUP) – WHATSAPP STYLE
+================================================= */
 .auth-wrapper {
-  min-height: 100dvh;
+  min-height: 100svh;
+  width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
+  flex-direction: column;
+  background: var(--wa-bg);
 }
 
 .auth-box {
   width: 100%;
-  max-width: 360px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  height: 100%;
+  background: transparent; /* ❌ NO CARD */
+  display: flex;
+  flex-direction: column;
 }
 
 .auth-header {
   background: var(--wa-green);
   color: #fff;
   padding: 16px;
-  text-align: center;
   font-size: 18px;
-  font-weight: bold;
+  text-align: center;
+  font-weight: 600;
 }
 
 .auth-body {
-  padding: 20px;
+  flex: 1;
+  background: #fff;
+  padding: 24px 16px;
 }
 
 .auth-body input {
   width: 100%;
   padding: 12px;
   font-size: 15px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
@@ -70,60 +79,55 @@ body {
 .auth-body button {
   width: 100%;
   padding: 12px;
+  border-radius: 24px;
+  border: none;
   background: var(--wa-green);
   color: #fff;
   font-size: 15px;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-.auth-body button:hover {
-  opacity: 0.95;
 }
 
 .auth-msg,
 .auth-footer {
   text-align: center;
+  margin-top: 12px;
   font-size: 14px;
-  margin-top: 10px;
 }
 
 .auth-footer a {
   color: var(--wa-green);
+  font-weight: 600;
   text-decoration: none;
-  font-weight: bold;
 }
 
-/* ================= CHAT CONTAINER ================= */
+/* =================================================
+   CHAT CONTAINER – FULL SCREEN
+================================================= */
 .wa-container {
   width: 100%;
-  max-width: 420px;
-  height: 100dvh;
-  margin: 0 auto;
-  background: #fff;
+  height: 100svh;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background: #fff;
 }
 
-/* ================= HEADER ================= */
+/* =================================================
+   HEADER
+================================================= */
 .wa-header {
   background: var(--wa-green);
   color: #fff;
   display: flex;
   align-items: center;
-  padding: 10px 12px;
   gap: 10px;
+  padding: 10px 12px;
   flex-shrink: 0;
 }
 
 .wa-avatar {
-  width: 40px;
-  height: 40px;
-  background: var(--wa-green-light);
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
+  background: var(--wa-green-dark);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,6 +135,7 @@ body {
 }
 
 .wa-title .name {
+  font-size: 15px;
   font-weight: bold;
 }
 
@@ -139,43 +144,50 @@ body {
   opacity: 0.8;
 }
 
-/* ================= CHAT BODY ================= */
+/* =================================================
+   CHAT BODY
+================================================= */
 .wa-chat-body {
   flex: 1;
-  padding: 12px;
-  overflow-y: auto;
   background: var(--wa-bg);
-  padding-bottom: 8px;
+  padding: 10px;
+  overflow-y: auto;
 }
 
-/* ================= MESSAGE BUBBLES ================= */
+/* =================================================
+   MESSAGES
+================================================= */
 .msg {
-  max-width: 85%;
+  max-width: 82%;
   padding: 8px 12px;
   margin-bottom: 8px;
-  border-radius: 8px;
   font-size: 14px;
   line-height: 1.4;
-  word-wrap: break-word;
+  border-radius: 8px;
+  word-break: break-word;
 }
 
 .msg.user {
-  background: var(--wa-light);
   margin-left: auto;
+  background: var(--wa-light);
   border-bottom-right-radius: 2px;
 }
 
 .msg.bot {
+  margin-right: auto;
   background: #fff;
   border: 1px solid var(--wa-border);
-  margin-right: auto;
   border-bottom-left-radius: 2px;
 }
 
-/* ================= INPUT ================= */
+/* =================================================
+   INPUT BAR
+================================================= */
 .wa-input {
   display: flex;
-  padding: 10px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
   background: #f0f0f0;
   flex-shrink: 0;
 }
@@ -185,119 +197,243 @@ body {
   padding: 10px 14px;
   border-radius: 20px;
   border: none;
-  outline: none;
   font-size: 14px;
+  outline: none;
 }
 
 .wa-input button {
-  margin-left: 8px;
-  background: var(--wa-green);
-  color: #fff;
-  border: none;
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  cursor: pointer;
-}
-
-/* ================= ADMIN ================= */
-.admin-top {
-  justify-content: flex-start;
-}
-
-.tab-btn {
-  background: var(--wa-green-light);
-  color: #fff;
   border: none;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
+  background: var(--wa-green);
+  color: #fff;
+  font-size: 16px;
 }
 
-/* ================= SIDEBAR ================= */
+/* =================================================
+   ADMIN
+================================================= */
 .wa-sidebar {
   width: 100%;
-  max-width: 100%;
   background: #fff;
-  border-right: 1px solid var(--wa-border);
   overflow-y: auto;
 }
 
-/* ================= USER CARD ================= */
 .user-card {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px;
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid #eee;
 }
 
-.user-info {
+.admin-msg {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.pdf-preview iframe {
+  width: 100%;
+  height: 220px;
+  border: none;
+  border-radius: 6px;
+}
+
+/* =================================================
+   MOBILE PERFECT
+================================================= */
+@media (max-width: 600px) {
+  .msg {
+    max-width: 88%;
+    font-size: 13px;
+  }
+
+  .wa-input button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* =================================================
+   KEYBOARD SAFE (ANDROID / iOS)
+================================================= */
+@supports (height: 100dvh) {
+  .auth-wrapper,
+  .wa-container {
+    min-height: 100dvh;
+  }
+}
+/* =================================================
+   ADMIN TOP TABS – WHATSAPP STYLE
+   (Chats | Live | Reports)
+================================================= */
+
+.admin-top {
   display: flex;
-  gap: 8px;
-  flex: 1;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px;
+  background: var(--wa-green);
 }
 
-.avatar {
-  width: 36px;
-  height: 36px;
-  background: var(--wa-accent);
+.admin-top .tab-btn {
+  flex: 1; /* 🔥 equal width */
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
-  border-radius: 50%;
+  border: none;
+  padding: 10px 0;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+  gap: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
 }
 
-/* ================= ADMIN MSG ================= */
-.admin-msg {
-  position: relative;
+.admin-top .tab-btn i {
+  font-size: 14px;
+}
+
+/* Hover / tap feel */
+.admin-top .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Active button (JS se class add kar sakta hai later) */
+.admin-top .tab-btn.active {
   background: #fff;
-  border-radius: 8px;
-  padding: 10px;
-  margin-bottom: 10px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: var(--wa-green);
+  font-weight: 600;
 }
 
-.admin-msg .export-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  font-size: 11px;
-  padding: 4px 8px;
-  background: var(--wa-accent);
+/* Mobile polish */
+@media (max-width: 600px) {
+  .admin-top {
+    padding: 6px;
+  }
+
+  .admin-top .tab-btn {
+    font-size: 12px;
+    padding: 9px 0;
+  }
+}
+/* =================================================
+   ADMIN TOP TABS – WHATSAPP STYLE
+   (Chats | Live | Reports)
+================================================= */
+
+.admin-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px;
+  background: var(--wa-green);
+}
+
+.admin-top .tab-btn {
+  flex: 1; /* 🔥 equal width */
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
+  border: none;
+  padding: 10px 0;
+  font-size: 13px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.admin-top .tab-btn i {
+  font-size: 14px;
+}
+
+/* Hover / tap feel */
+.admin-top .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Active button (JS se class add kar sakta hai later) */
+.admin-top .tab-btn.active {
+  background: #fff;
+  color: var(--wa-green);
+  font-weight: 600;
+}
+
+/* Mobile polish */
+@media (max-width: 600px) {
+  .admin-top {
+    padding: 6px;
+  }
+
+  .admin-top .tab-btn {
+    font-size: 12px;
+    padding: 9px 0;
+  }
+}
+/* =================================================
+   REPORTS TAB – FILTERS & TABLE (WHATSAPP STYLE)
+================================================= */
+
+.report-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.report-filters select,
+.report-filters input,
+.report-filters button {
+  padding: 8px 10px;
+  font-size: 13px;
   border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.report-filters button {
+  background: var(--wa-green);
+  color: #fff;
   border: none;
   cursor: pointer;
 }
 
-/* ================= MOBILE ONLY ================= */
-@media (max-width: 480px) {
-  .wa-header {
-    padding: 8px 10px;
-  }
+.report-filters .export-btn {
+  background: var(--wa-accent);
+}
 
-  .wa-input {
-    padding: 8px;
-  }
+/* Report table */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 13px;
+  margin-top: 10px;
+}
 
-  .wa-input input {
-    font-size: 13px;
-  }
+.report-table th {
+  background: #f2f2f2;
+  text-align: left;
+  padding: 8px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+}
 
-  .msg {
-    font-size: 13px;
-    max-width: 90%;
-  }
+.report-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
 
-  .user-card {
-    padding: 8px;
-  }
-
-  .admin-msg {
-    padding: 8px;
-  }
+/* Mobile scroll safety */
+.report-table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
 }
