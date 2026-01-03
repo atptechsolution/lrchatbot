@@ -645,3 +645,114 @@ body {
 .user-card .icon {
   flex-shrink: 0;
 }
+/* =================================================
+   REPORTS TAB – FULL WIDTH & ATTRACTIVE
+================================================= */
+
+/* Reports main container (adminChat area) */
+#adminChat {
+  width: 100%;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+/* Report heading */
+#adminChat h3 {
+  margin: 0 0 18px 0;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Filters row – full width & centered */
+.report-filters {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* 🔥 center me lao */
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+/* Inputs & selects – wider */
+.report-filters select,
+.report-filters input {
+  min-width: 200px; /* 🔥 failao */
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* View button */
+.report-filters button {
+  padding: 10px 22px;
+  font-size: 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--wa-green);
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Download button highlight */
+.report-filters .export-btn {
+  background: var(--wa-accent);
+  font-weight: 600;
+}
+
+/* Report table container – full width */
+#reportTable {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Table polish */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.report-table th {
+  background: #f5f5f5;
+  padding: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+}
+
+.report-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+/* =================================================
+   MOBILE – STILL CLEAN & FULL WIDTH
+================================================= */
+@media (max-width: 768px) {
+  #adminChat {
+    padding: 16px;
+  }
+
+  .report-filters {
+    padding: 16px;
+  }
+
+  .report-filters select,
+  .report-filters input {
+    min-width: 100%;
+  }
+
+  .report-filters button {
+    width: 100%;
+  }
+}
