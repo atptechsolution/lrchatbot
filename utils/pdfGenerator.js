@@ -52,7 +52,16 @@ async function generatePdf(templateName, data) {
       fs.mkdirSync(pdfDir, { recursive: true });
     }
 
-    const fileName = `LR_${Date.now()}.pdf`;
+    /* =====================================================
+       🔥 ONLY CHANGE IS HERE (PDF NAME = VEHICLE NUMBER)
+       ❌ OLD: LR_${Date.now()}.pdf
+       ✅ NEW: <TRUCK_NUMBER>.pdf
+    ===================================================== */
+    const safeTruckNumber = (data.truckNumber || "LR")
+      .replace(/\s+/g, "")
+      .replace(/[^a-zA-Z0-9]/g, "");
+
+    const fileName = `${safeTruckNumber}.pdf`;
     const outputPath = path.join(pdfDir, fileName);
 
     const browser = await puppeteer.launch({
