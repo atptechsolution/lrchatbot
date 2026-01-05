@@ -38,8 +38,6 @@ app.post("/signup", async (req, res) => {
   if (exists) return res.json({ msg: "Already registered" });
 
   await User.create({ name, mobile });
-  console.log("🆕 Signup:", name, mobile);
-
   res.json({ msg: "Signup done. Wait for admin approval" });
 });
 
@@ -48,7 +46,6 @@ app.post("/login", async (req, res) => {
   const { mobile } = req.body;
 
   if (mobile === ADMIN_MOBILE) {
-    console.log("👑 Admin login");
     return res.json({ role: "admin" });
   }
 
@@ -56,7 +53,6 @@ app.post("/login", async (req, res) => {
   if (!user) return res.json({ msg: "Signup first" });
   if (!user.approved) return res.json({ msg: "Waiting for approval" });
 
-  console.log("👤 User login:", mobile);
   res.json({ role: "user" });
 });
 
@@ -69,38 +65,45 @@ io.on("connection", (socket) => {
 
       /* 🔍 Extract LR using AI */
       const lr = await extractDetails(message);
-      console.log("🧠 LR EXTRACTED:", lr);
 
-      /* ✅ SMART VALIDATION */
+      /* ✅ VALIDATION */
       const missing = [];
       if (!lr.truckNumber) missing.push("Truck Number");
       if (!lr.to) missing.push("Destination (To)");
       if (!lr.weight) missing.push("Weight");
       if (!lr.description) missing.push("Goods / Description");
 
+      /* ❌ INCOMPLETE LR */
       if (missing.length > 0) {
-        const errorText = `❌ LR incomplete\nMissing: ${missing.join(", ")}`;
+        /* -------- USER CHAT -------- */
+        const userMsg =
+          `❌ LR Incomplete\n\nMissing Details:\n` +
+          missing.map((m) => `• ${m}`).join("\n") +
+          `\n\nPlease resend like:\n` +
+          `MH09HH4512 24 ton Plastic Dana Indore to Nagpur`;
 
-        /* 👤 USER NOTIFY */
         socket.emit("botMessage", {
-          text:
-            errorText +
-            "\n\nPlease resend message with missing details 🙏\n" +
-            "Example:\nMH09HH4512 24 ton Plastic Dana Indore to Nagpur",
+          text: userMsg,
         });
 
-        /* 👑 ADMIN LIVE ALERT */
+        /* -------- ADMIN CHAT / LIVE -------- */
         io.emit("adminMessage", {
-          type: "LR_ERROR",
+          userId: user._id.toString(),
           userName: user.name,
           userMobile: user.mobile,
-          originalMessage: message,
-          extracted: lr,
-          missing,
-          time: new Date().toLocaleTimeString("en-IN"),
+          message:
+            `⚠️ LR INCOMPLETE\n\n` +
+            `Original Message:\n"${message}"\n\n` +
+            `Missing Details:\n` +
+            missing.map((m) => `• ${m}`).join("\n"),
+          truckNumber: "-",
+          weight: "-",
+          pdfLink: "",
+          templateName: user.assignedTemplate,
+          createdAt: new Date().toISOString(),
+          isError: true,
         });
 
-        console.log("⚠️ LR INCOMPLETE:", missing);
         return;
       }
 
@@ -118,21 +121,27 @@ io.on("connection", (socket) => {
           "file://" + path.join(__dirname, "public/assets/namaskarm-logo.png");
       }
 
-      console.log("🖼️ LOGO USED:", logoPath);
+      /* 🧾 PDF GENERATION (IST for display only) */
+      const now = new Date();
+      const istDate = now.toLocaleDateString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      });
+      const istTime = now.toLocaleTimeString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      });
 
-      /* 🧾 Generate PDF */
       const pdfFile = await generatePdf(user.assignedTemplate, {
         truckNumber: lr.truckNumber,
         from: lr.from || "",
         to: lr.to || "",
         weight: lr.weight,
         description: lr.description,
-        date: new Date().toLocaleDateString("en-IN"),
-        time: new Date().toLocaleTimeString("en-IN"),
+        date: istDate,
+        time: istTime,
         logoPath,
       });
 
-      /* 📦 SAVE CHAT */
+      /* 📦 SAVE CHAT (VALID LR ONLY) */
       const payload = {
         userId: user._id.toString(),
         userName: user.name,
@@ -144,24 +153,21 @@ io.on("connection", (socket) => {
         description: lr.description,
         message,
         pdfLink: `/pdf/generated/${pdfFile}`,
-        time: new Date().toLocaleTimeString("en-IN"),
         templateName: user.assignedTemplate,
       };
 
       await Chat.create(payload);
-      console.log("✅ LR SAVED:", payload.truckNumber);
 
-      /* 👤 USER SUCCESS */
       socket.emit("botMessage", {
         text: "✅ LR Generated Successfully",
         pdfLink: payload.pdfLink,
+          pdfName: `LR_${lr.truckNumber}.pdf`, 
         templateName: payload.templateName,
       });
 
-      /* 👑 ADMIN LIVE */
       io.emit("adminMessage", payload);
     } catch (err) {
-      console.error("❌ LR generation failed:", err);
+      console.error("❌ LR error:", err);
       socket.emit("botMessage", {
         text: "❌ Server error. Please try again later.",
       });
@@ -173,6 +179,12 @@ io.on("connection", (socket) => {
 app.get("/admin/users", async (req, res) => {
   const users = await User.find().sort({ approved: 1 });
   res.json(users);
+});
+
+/* 🔥 ADMIN CHATS (refresh / relogin safe) */
+app.get("/admin/chats", async (req, res) => {
+  const chats = await Chat.find().sort({ createdAt: 1 });
+  res.json(chats);
 });
 
 app.post("/admin/approve/:id", async (req, res) => {
@@ -193,63 +205,100 @@ app.delete("/admin/user/:id", async (req, res) => {
   await Chat.deleteMany({ userId });
   res.json({ msg: "User deleted" });
 });
-
 /* ------------------ REPORT EXPORT (EXCEL) ------------------ */
 app.get("/admin/report/export", async (req, res) => {
-  const { template, from, to } = req.query;
-  const query = {};
+  try {
+    console.log("📥 EXCEL EXPORT HIT");
+    console.log("➡️ QUERY:", req.query);
 
-  if (template && template !== "all") query.templateName = template;
+    const { template, from, to } = req.query;
+    const query = {};
 
-  if (from || to) {
-    query.createdAt = {};
-    if (from) query.createdAt.$gte = new Date(from);
-    if (to) query.createdAt.$lte = new Date(to + "T23:59:59");
+    if (template && template !== "all") {
+      query.templateName = template;
+    }
+
+    if (from || to) {
+      query.createdAt = {};
+      if (from) query.createdAt.$gte = new Date(from);
+      if (to) query.createdAt.$lte = new Date(to + "T23:59:59");
+    }
+
+    console.log("🧠 MONGO QUERY:", query);
+
+    const chats = await Chat.find(query).sort({ createdAt: 1 });
+    console.log("📊 TOTAL ROWS FOUND:", chats.length);
+
+    const rows = chats.map((c) => ({
+      Template: c.templateName,
+      User: c.userName,
+      Mobile: c.userMobile,
+      TruckNumber: c.truckNumber,
+      From: c.from,
+      To: c.to,
+      Weight: c.weight,
+      Description: c.description,
+      Date: new Date(c.createdAt).toLocaleDateString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      }),
+      Time: new Date(c.createdAt).toLocaleTimeString("en-IN", {
+        timeZone: "Asia/Kolkata",
+      }),
+      PDF: c.pdfLink,
+    }));
+
+    console.log("🧾 SAMPLE ROW:", rows[0] || "NO DATA");
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(rows);
+    XLSX.utils.book_append_sheet(wb, ws, "LR_REPORT");
+
+    const file = `LR_REPORT_${Date.now()}.xlsx`;
+    XLSX.writeFile(wb, file);
+
+    console.log("✅ EXCEL FILE CREATED:", file);
+
+    res.download(file, () => {
+      require("fs").unlinkSync(file);
+      console.log("🗑️ TEMP EXCEL DELETED");
+    });
+  } catch (err) {
+    console.error("❌ EXCEL EXPORT FAILED:", err);
+    res.status(500).json({ msg: "Excel export failed" });
   }
-
-  const chats = await Chat.find(query).sort({ createdAt: 1 });
-  console.log("📊 Export rows:", chats.length);
-
-  const rows = chats.map((c) => ({
-    Template: c.templateName,
-    User: c.userName,
-    Mobile: c.userMobile,
-    TruckNumber: c.truckNumber,
-    From: c.from,
-    To: c.to,
-    Weight: c.weight,
-    Description: c.description,
-    Date: new Date(c.createdAt).toLocaleDateString("en-IN"),
-    Time: c.time,
-    PDF: c.pdfLink,
-  }));
-
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(rows);
-  XLSX.utils.book_append_sheet(wb, ws, "LR_REPORT");
-
-  const file = "LR_REPORT.xlsx";
-  XLSX.writeFile(wb, file);
-
-  res.download(file, () => require("fs").unlinkSync(file));
 });
-
-/* ------------------ REPORT PREVIEW (JSON) ------------------ */
+/* ------------------ REPORT PREVIEW (VIEW BUTTON) ------------------ */
+/* ------------------ REPORT PREVIEW ------------------ */
 app.get("/admin/report/preview", async (req, res) => {
-  const { template, from, to } = req.query;
-  const query = {};
+  try {
+    console.log("👀 REPORT PREVIEW HIT");
+    console.log("➡️ QUERY:", req.query);
 
-  if (template && template !== "all") query.templateName = template;
+    const { template, from, to } = req.query;
+    const query = {};
 
-  if (from || to) {
-    query.createdAt = {};
-    if (from) query.createdAt.$gte = new Date(from);
-    if (to) query.createdAt.$lte = new Date(to + "T23:59:59");
+    if (template && template !== "all") {
+      query.templateName = template;
+    }
+
+    if (from || to) {
+      query.createdAt = {};
+      if (from) query.createdAt.$gte = new Date(from);
+      if (to) query.createdAt.$lte = new Date(to + "T23:59:59");
+    }
+
+    console.log("🧠 MONGO QUERY:", query);
+
+    const chats = await Chat.find(query).sort({ createdAt: -1 });
+    console.log("📊 PREVIEW ROWS:", chats.length);
+
+    res.json(chats);
+  } catch (err) {
+    console.error("❌ REPORT PREVIEW FAILED:", err);
+    res.status(500).json([]);
   }
-
-  const chats = await Chat.find(query).sort({ createdAt: -1 });
-  res.json(chats);
 });
+
 /* ------------------ START ------------------ */
 server.listen(3000, () =>
   console.log("🚀 Server running on http://localhost:3000")
