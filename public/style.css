@@ -432,11 +432,7 @@ body {
 }
 
 /* Mobile scroll safety */
-.report-table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
+
 /* =================================================
    CHATS TAB – PROPER SPLIT VIEW (DESKTOP + MOBILE)
 ================================================= */
@@ -981,5 +977,121 @@ body {
   .wa-chat {
     display: flex !important; /* 🔥 report ke liye visible */
     flex-direction: column;
+  }
+}
+/* =================================================
+   CHAT DATE SEPARATOR – BIG & CENTER (SAFE)
+================================================= */
+.chat-date,
+.date-separator {
+  display: block;
+  text-align: center;
+  margin: 18px auto;
+  padding: 6px 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  background: #e1f3fb; /* WhatsApp style soft blue */
+  color: #075e54;
+
+  border-radius: 16px;
+  width: fit-content;
+}
+
+/* Mobile me aur bada */
+@media (max-width: 600px) {
+  .chat-date,
+  .date-separator {
+    font-size: 16px;
+    padding: 8px 22px;
+  }
+}
+
+/* =================================================
+   FIX: LONG MESSAGE WORD WRAP (MOBILE FRIENDLY)
+================================================= */
+.msg {
+  white-space: pre-wrap; /* 🔥 line-by-line wrap */
+  word-wrap: break-word; /* old browser support */
+  overflow-wrap: anywhere; /* 🔥 long words break */
+}
+/* =================================================
+   FIX: ADMIN EXCEL (XL) BUTTON VISIBLE ALWAYS
+================================================= */
+.report-filters .export-btn {
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  white-space: nowrap; /* ⬅ XL text break na ho */
+}
+
+/* Mobile pe bhi clearly dikhe */
+@media (max-width: 768px) {
+  .report-filters .export-btn {
+    width: 100% !important;
+    margin-top: 8px;
+  }
+}
+/* =================================================
+   📱 REPORT PREVIEW – MOBILE CARD VIEW (SAFE)
+================================================= */
+@media (max-width: 768px) {
+  .report-table,
+  .report-table thead,
+  .report-table tbody,
+  .report-table th,
+  .report-table td,
+  .report-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* hide table header */
+  .report-table thead {
+    display: none;
+  }
+
+  .report-table tr {
+    background: #fff;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .report-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border: none;
+    font-size: 15px;
+  }
+
+  .report-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #075e54;
+  }
+}
+/* =================================================
+   ⏱️ CHAT TIME – SMALL & CLEAN (WHATSAPP STYLE)
+================================================= */
+.msg-time {
+  font-size: 11px; /* 🔥 chhota */
+  color: #667781; /* WhatsApp grey */
+  text-align: right;
+  margin-top: 4px;
+  line-height: 1;
+}
+
+/* mobile pe bhi chhota hi rahe */
+@media (max-width: 600px) {
+  .msg-time {
+    font-size: 10px;
   }
 }
