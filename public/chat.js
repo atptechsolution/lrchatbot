@@ -1,22 +1,42 @@
 const socket = io();
 const mobile = localStorage.getItem("mobile");
 
-// auth check
-if (!mobile) {
-  window.location.href = "/login.html";
-}
+window.addEventListener("load", () => {
+  if (!mobile) {
+    window.location.href = "/login.html";
+  }
+});
 
 const CHAT_KEY = `chat_history_${mobile}`;
+const LIVE_KEY = "live_pdfs_all_users";
 
-/* ================= DATE HELPERS (IST) ================= */
-function getDateLabel(date) {
-  const d = new Date(date);
+/* ================= STATE ================= */
+let mode = "chat"; // chat | live
+let livePDFs = [];
+
+/* ================= SAFE DATE HELPERS ================= */
+function toDateSafe(d) {
+  const date = d ? new Date(d) : new Date();
+  return isNaN(date.getTime()) ? new Date() : date;
+}
+
+function formatTime(d) {
+  const date = toDateSafe(d);
+  return date.toLocaleTimeString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatDateLabel(d) {
+  const date = toDateSafe(d);
 
   const today = new Date();
   const yesterday = new Date();
   yesterday.setDate(today.getDate() - 1);
 
-  const dIST = d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
+  const dIST = date.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
   const tIST = today.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
   const yIST = yesterday.toLocaleDateString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -25,7 +45,7 @@ function getDateLabel(date) {
   if (dIST === tIST) return "Today";
   if (dIST === yIST) return "Yesterday";
 
-  return d.toLocaleDateString("en-IN", {
+  return date.toLocaleDateString("en-IN", {
     timeZone: "Asia/Kolkata",
     day: "2-digit",
     month: "short",
@@ -33,23 +53,16 @@ function getDateLabel(date) {
   });
 }
 
-function getTime(date) {
-  return new Date(date).toLocaleTimeString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-/* ================= LOAD SAVED CHAT ================= */
+/* ================= LOAD CHAT ================= */
 function loadChatFromStorage() {
   const chat = document.getElementById("chat");
-  const saved = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+  chat.innerHTML = "";
 
+  const saved = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
   let lastDate = "";
 
   saved.forEach((m) => {
-    const label = getDateLabel(m.time);
+    const label = formatDateLabel(m.time);
     if (label !== lastDate) {
       chat.innerHTML += `<div class="chat-date">${label}</div>`;
       lastDate = label;
@@ -58,7 +71,7 @@ function loadChatFromStorage() {
     chat.innerHTML += `
       <div class="msg ${m.type}">
         ${m.text}
-        <div class="msg-time">${getTime(m.time)}</div>
+        <div class="msg-time">${formatTime(m.time)}</div>
       </div>
     `;
   });
@@ -69,16 +82,67 @@ function loadChatFromStorage() {
 /* ================= SAVE MESSAGE ================= */
 function saveMessage(type, text) {
   const saved = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-  saved.push({
-    type,
-    text,
-    time: new Date().toISOString(),
-  });
+  saved.push({ type, text, time: new Date().toISOString() });
   localStorage.setItem(CHAT_KEY, JSON.stringify(saved));
 }
 
-/* ---------------- SEND MESSAGE ---------------- */
+/* ================= LOAD LIVE ================= */
+function loadLiveFromStorage() {
+  livePDFs = JSON.parse(localStorage.getItem(LIVE_KEY) || "[]");
+}
+
+/* ================= CHAT MODE ================= */
+function showChat() {
+  mode = "chat";
+  document.getElementById("chatInput").style.display = "flex";
+  loadChatFromStorage();
+}
+
+/* ================= LIVE MODE ================= */
+function showLive() {
+  mode = "live";
+  document.getElementById("chatInput").style.display = "none";
+  renderLive();
+}
+
+function renderLive() {
+  const chat = document.getElementById("chat");
+  chat.innerHTML = `<h3>⚡ Live PDFs</h3>`;
+
+  let lastDate = "";
+
+  livePDFs.forEach((p) => {
+    const label = formatDateLabel(p.createdAt);
+    if (label !== lastDate) {
+      chat.innerHTML += `<div class="chat-date">${label}</div>`;
+      lastDate = label;
+    }
+
+    chat.innerHTML += `
+      <div class="msg bot">
+        <strong>${p.userName || "User"}</strong> (${p.userMobile || "-"})<br>
+        📝 ${p.message || "-"}<br>
+        🚚 <b>${p.truckNumber || "-"}</b> | ${p.weight || "-"}<br>
+        📄 <a href="${p.pdfLink}" target="_blank">Download PDF</a>
+        <div class="msg-time">${formatTime(p.createdAt)}</div>
+      </div>
+    `;
+  });
+
+  chat.scrollTop = chat.scrollHeight;
+}
+function handleKey(e) {
+  // ENTER → send message
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+/* ================= SEND ================= */
 function send() {
+  if (mode !== "chat") return;
+
   const input = document.getElementById("msg");
   const msg = input.value.trim();
   if (!msg) return;
@@ -102,69 +166,69 @@ function send() {
 
   saveMessage("user", msg);
 
-  chat.scrollTop = chat.scrollHeight;
+  chat.innerHTML += `
+    <div class="msg user">
+      ${msg}
+      <div class="msg-time">${formatTime()}</div>
+    </div>
+  `;
 
-  socket.emit("userMessage", {
-    mobile,
-    message: msg,
-  });
+  saveMessage("user", msg);
+  socket.emit("userMessage", { mobile, message: msg });
 
   input.value = "";
-  autoGrow(input);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-/* ---------------- ENTER TO SEND ---------------- */
-document.getElementById("msg").addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    send();
-  }
-});
-
-/* ---------------- AUTO GROW ---------------- */
-function autoGrow(el) {
-  el.style.height = "auto";
-  el.style.height = el.scrollHeight + "px";
-}
-
-document.getElementById("msg").addEventListener("input", function () {
-  autoGrow(this);
-});
-
-/* ---------------- RECEIVE BOT MESSAGE ---------------- */
+/* ================= BOT MESSAGE (ERROR SAFE) ================= */
 socket.on("botMessage", (data) => {
+  if (mode !== "chat") return;
+
   const chat = document.getElementById("chat");
   const now = new Date();
-
-  const label = getDateLabel(now);
-  const last = chat.querySelector(".chat-date:last-of-type")?.innerText;
-
-  if (label !== last) {
-    chat.innerHTML += `<div class="chat-date">${label}</div>`;
-  }
 
   chat.innerHTML += `
     <div class="msg bot">
       ${data.text}
-      <div class="msg-time">${getTime(now)}</div>
+      <div class="msg-time">${formatTime()}</div>
     </div>
   `;
 
   saveMessage("bot", data.text);
-
-  if (data.pdfLink) {
-    const name = data.pdfName || "LR.pdf";
-
-    chat.innerHTML += `
-    <div class="msg bot">
-      📄 <a href="${data.pdfLink}" target="_blank">${name}</a>
-      <div class="msg-time">${getTime(now)}</div>
-    </div>
-  `;
-  }
-
   chat.scrollTop = chat.scrollHeight;
 });
 
-/* ---------------- INIT ---------------- */
-loadChatFromStorage();
+/* ================= ADMIN MESSAGE ================= */
+socket.on("adminMessage", (data) => {
+  /* ---- LIVE (ALL USERS) ---- */
+  livePDFs.unshift(data);
+  localStorage.setItem(LIVE_KEY, JSON.stringify(livePDFs));
+
+  /* ---- CHAT (ONLY SAME USER) ---- */
+  if (data.userMobile === mobile && mode === "chat") {
+    const chat = document.getElementById("chat");
+
+    const fullText = `
+${data.message || ""}
+🚚 ${data.truckNumber || "-"} | ${data.weight || "-"}
+📄 <a href="${data.pdfLink}" target="_blank">Download PDF</a>
+    `;
+
+    chat.innerHTML += `
+      <div class="msg bot">
+        ${fullText}
+        <div class="msg-time">${formatTime(data.createdAt)}</div>
+      </div>
+    `;
+
+    // 🔥 FULL TEXT SAVE (PDF INCLUDED)
+    saveMessage("bot", fullText);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  if (mode === "live") renderLive();
+});
+
+/* ================= INIT ================= */
+loadLiveFromStorage();
+showChat();

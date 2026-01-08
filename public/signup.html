@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Signup</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="auth-wrapper">
-      <div class="auth-box">
-        <div class="auth-header">WhatsApp LR • Signup</div>
+<head>
+  <title>Signup</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-        <div class="auth-body">
-          <input id="name" placeholder="Enter your name" />
-          <input id="mobile" placeholder="Enter mobile number" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="signup.css" />
+</head>
 
-          <button onclick="signup()">SIGN UP</button>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-box">
+      <div class="auth-header">WhatsApp LR • Signup</div>
 
-          <div id="msg" class="auth-msg"></div>
+      <div class="auth-body">
+        <input id="name" placeholder="Enter your name" />
+        <input id="mobile" placeholder="Enter mobile number" />
 
-          <div class="auth-footer">
-            Already registered?
-            <a href="login.html">Login</a>
-          </div>
+        <button onclick="signup()">SIGN UP</button>
+
+        <div id="msg" class="auth-msg"></div>
+
+        <div class="auth-footer">
+          Already registered?
+          <a href="login.html">Login</a>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="auth.js"></script>
-  </body>
+  <script src="auth.js"></script>
+</body>
+
 </html>

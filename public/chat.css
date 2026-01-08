@@ -1,0 +1,181 @@
+/* =================================================
+   🔥 HARD FIX – CHAT MESSAGE LAYOUT
+   (FORCE VERTICAL STACK LIKE WHATSAPP)
+================================================= */
+
+/* Chat body must stack messages vertically */
+.wa-chat-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+
+/* =================================================
+   CHAT MESSAGE BUBBLES – WHATSAPP STYLE
+================================================= */
+
+.msg {
+    /* 🔥 FORCE EACH MESSAGE TO ITS OWN ROW */
+    align-self: flex-start;
+    display: inline-flex;
+
+    max-width: 65%;
+    width: fit-content;
+    min-width: 48px;
+
+    padding: 8px 12px 6px;
+    margin: 6px 0;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    border-radius: 10px;
+    position: relative;
+
+    flex-direction: column;
+
+    white-space: pre-line;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+/* ===============================
+   SENT / USER MESSAGE
+================================ */
+.msg.user {
+    align-self: flex-end;
+    /* 🔥 RIGHT SIDE */
+    background-color: #016B5D;
+    color: #F7F7F8;
+
+    border-bottom-right-radius: 3px;
+    box-shadow: none;
+}
+
+/* ===============================
+   RECEIVED / BOT MESSAGE
+================================ */
+.msg.bot {
+    align-self: flex-start;
+    /* 🔥 LEFT SIDE */
+    background-color: #FCFEFB;
+    color: #606D75;
+
+    border-bottom-left-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* ===============================
+   LINKS
+================================ */
+.msg a {
+    color: #0b846d;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.msg.user a {
+    color: #e9fffb;
+}
+
+/* ===============================
+   TIMESTAMP
+================================ */
+.msg-time {
+    align-self: flex-end;
+    margin-top: 4px;
+
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.75;
+
+    white-space: nowrap;
+    user-select: none;
+}
+
+.msg.user .msg-time {
+    color: rgba(247, 247, 248, 0.85);
+}
+
+.msg.bot .msg-time {
+    color: #667781;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 600px) {
+    .msg {
+        max-width: 85%;
+        font-size: 13px;
+    }
+
+    .msg-time {
+        font-size: 10px;
+    }
+}
+
+
+/* =========================================
+   HEADER ICON BUTTONS (CHAT / LIVE)
+========================================= */
+
+.tab-btn {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+/* SVG sizing fix */
+.tab-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+/* Hover effect (WhatsApp style) */
+.tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Active / pressed */
+.tab-btn:active {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: scale(0.96);
+}
+
+/* Focus (keyboard accessibility) */
+.tab-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+/* Optional: active state (if you add class via JS later) */
+.tab-btn.active {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile touch comfort */
+@media (max-width: 600px) {
+    .tab-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .tab-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+}

@@ -47,7 +47,8 @@ body {
 .auth-box {
   width: 100%;
   height: 100%;
-  background: transparent; /* ❌ NO CARD */
+  background: transparent;
+  /* ❌ NO CARD */
   display: flex;
   flex-direction: column;
 }
@@ -261,11 +262,13 @@ body {
    KEYBOARD SAFE (ANDROID / iOS)
 ================================================= */
 @supports (height: 100dvh) {
+
   .auth-wrapper,
   .wa-container {
     min-height: 100dvh;
   }
 }
+
 /* =================================================
    ADMIN TOP TABS – WHATSAPP STYLE
    (Chats | Live | Reports)
@@ -280,7 +283,8 @@ body {
 }
 
 .admin-top .tab-btn {
-  flex: 1; /* 🔥 equal width */
+  flex: 1;
+  /* 🔥 equal width */
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
   border: none;
@@ -322,6 +326,7 @@ body {
     padding: 9px 0;
   }
 }
+
 /* =================================================
    ADMIN TOP TABS – WHATSAPP STYLE
    (Chats | Live | Reports)
@@ -336,7 +341,8 @@ body {
 }
 
 .admin-top .tab-btn {
-  flex: 1; /* 🔥 equal width */
+  flex: 1;
+  /* 🔥 equal width */
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
   border: none;
@@ -378,6 +384,7 @@ body {
     padding: 9px 0;
   }
 }
+
 /* =================================================
    REPORTS TAB – FILTERS & TABLE (WHATSAPP STYLE)
 ================================================= */
@@ -432,11 +439,7 @@ body {
 }
 
 /* Mobile scroll safety */
-.report-table {
-  display: block;
-  overflow-x: auto;
-  white-space: nowrap;
-}
+
 /* =================================================
    CHATS TAB – PROPER SPLIT VIEW (DESKTOP + MOBILE)
 ================================================= */
@@ -448,7 +451,8 @@ body {
 
 /* Sidebar (user list) */
 .wa-sidebar {
-  width: 320px; /* 🔥 WhatsApp-like width */
+  width: 320px;
+  /* 🔥 WhatsApp-like width */
   max-width: 100%;
   background: #fff;
   border-right: 1px solid #e5e5e5;
@@ -496,11 +500,13 @@ body {
   }
 
   .wa-chat {
-    display: none; /* 🔥 chat hidden until user selected */
+    display: none;
+    /* 🔥 chat hidden until user selected */
   }
 
   /* When user opens a chat, sidebar is hidden via JS already */
 }
+
 /* =================================================
    CHATS LIST – CLEAR, SEPARATED, SMART LAYOUT
 ================================================= */
@@ -551,8 +557,8 @@ body {
 }
 
 /* RIGHT SIDE: actions */
-.user-card > .icon,
-.user-card > .template-dd {
+.user-card>.icon,
+.user-card>.template-dd {
   margin-left: auto;
 }
 
@@ -607,6 +613,7 @@ body {
     font-size: 11px;
   }
 }
+
 /* =================================================
    FIX: CHAT CARD FULL WIDTH (LEFT ISSUE SOLVED)
 ================================================= */
@@ -614,13 +621,16 @@ body {
 /* Sidebar ko full width ensure */
 .wa-sidebar {
   width: 100%;
-  padding: 0; /* 🔥 gap hatao */
+  padding: 0;
+  /* 🔥 gap hatao */
 }
 
 /* User card = FULL WIDTH */
 .user-card {
-  width: calc(100% - 16px); /* 🔥 full width minus margin */
-  margin: 8px; /* equal spacing all sides */
+  width: calc(100% - 16px);
+  /* 🔥 full width minus margin */
+  margin: 8px;
+  /* equal spacing all sides */
   padding: 12px;
   border-radius: 12px;
   background: #fff;
@@ -645,6 +655,7 @@ body {
 .user-card .icon {
   flex-shrink: 0;
 }
+
 /* =================================================
    REPORTS TAB – FULL WIDTH & ATTRACTIVE
 ================================================= */
@@ -670,7 +681,8 @@ body {
 .report-filters {
   width: 100%;
   display: flex;
-  justify-content: center; /* 🔥 center me lao */
+  justify-content: center;
+  /* 🔥 center me lao */
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
@@ -684,7 +696,8 @@ body {
 /* Inputs & selects – wider */
 .report-filters select,
 .report-filters input {
-  min-width: 200px; /* 🔥 failao */
+  min-width: 200px;
+  /* 🔥 failao */
   padding: 10px 14px;
   font-size: 14px;
   border-radius: 8px;
@@ -756,13 +769,16 @@ body {
     width: 100%;
   }
 }
+
 /* =================================================
    MOBILE SCALE UP – BIGGER FONTS & BOXES
 ================================================= */
 @media (max-width: 768px) {
+
   /* ---------- GLOBAL TEXT ---------- */
   body {
-    font-size: 16px; /* base font bada */
+    font-size: 16px;
+    /* base font bada */
   }
 
   h3 {
@@ -772,7 +788,8 @@ body {
   /* ---------- ADMIN TOP TABS ---------- */
   .admin-top .tab-btn {
     font-size: 15px;
-    padding: 14px 0; /* 🔥 tall buttons */
+    padding: 14px 0;
+    /* 🔥 tall buttons */
     border-radius: 12px;
   }
 
@@ -857,13 +874,16 @@ body {
     font-size: 18px;
   }
 }
+
 /* =================================================
    🔥 HARD MOBILE OVERRIDE – FORCE BIG UI
 ================================================= */
 @media (max-width: 768px) {
+
   /* ---------- ROOT SCALE ---------- */
   html {
-    font-size: 18px !important; /* 🔥 sab kuch bada */
+    font-size: 18px !important;
+    /* 🔥 sab kuch bada */
   }
 
   body {
@@ -953,5 +973,196 @@ body {
     width: 56px !important;
     height: 56px !important;
     font-size: 20px !important;
+  }
+}
+
+/* =================================================
+   🔥 FIX: REPORT FILTERS HIDING ON MOBILE
+   (NO OTHER CSS CHANGE)
+================================================= */
+@media (max-width: 768px) {
+  .report-filters {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .report-filters>* {
+    display: block !important;
+    width: 100% !important;
+    visibility: visible !important;
+  }
+}
+
+/* =================================================
+   FIX: SHOW REPORTS ON MOBILE
+   (DO NOT CHANGE ANYTHING ELSE)
+================================================= */
+@media (max-width: 768px) {
+  .wa-chat {
+    display: flex !important;
+    /* 🔥 report ke liye visible */
+    flex-direction: column;
+  }
+}
+
+/* =================================================
+   CHAT DATE SEPARATOR – BIG & CENTER (SAFE)
+================================================= */
+.chat-date,
+.date-separator {
+  display: block;
+  text-align: center;
+  margin: 18px auto;
+  padding: 6px 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  background: #e1f3fb;
+  /* WhatsApp style soft blue */
+  color: #075e54;
+
+  border-radius: 16px;
+  width: fit-content;
+}
+
+/* Mobile me aur bada */
+@media (max-width: 600px) {
+
+  .chat-date,
+  .date-separator {
+    font-size: 16px;
+    padding: 8px 22px;
+  }
+}
+
+/* =================================================
+   FIX: LONG MESSAGE WORD WRAP (MOBILE FRIENDLY)
+================================================= */
+.msg {
+  /* white-space: pre-wrap; */
+  /* 🔥 line-by-line wrap */
+  /* word-wrap: break-word; */
+  /* old browser support */
+  /* overflow-wrap: anywhere; */
+  /* 🔥 long words break */
+}
+
+.wa-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #f0f2f5;
+}
+
+.wa-input textarea {
+  flex: 1;
+  resize: none;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.wa-input button {
+  background: #25D366;
+  border: none;
+  color: white;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+
+/* =================================================
+   FIX: ADMIN EXCEL (XL) BUTTON VISIBLE ALWAYS
+================================================= */
+.report-filters .export-btn {
+  display: inline-flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+
+  white-space: nowrap;
+  /* ⬅ XL text break na ho */
+}
+
+/* Mobile pe bhi clearly dikhe */
+@media (max-width: 768px) {
+  .report-filters .export-btn {
+    width: 100% !important;
+    margin-top: 8px;
+  }
+}
+
+/* =================================================
+   📱 REPORT PREVIEW – MOBILE CARD VIEW (SAFE)
+================================================= */
+@media (max-width: 768px) {
+
+  .report-table,
+  .report-table thead,
+  .report-table tbody,
+  .report-table th,
+  .report-table td,
+  .report-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  /* hide table header */
+  .report-table thead {
+    display: none;
+  }
+
+  .report-table tr {
+    background: #fff;
+    margin-bottom: 14px;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .report-table td {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border: none;
+    font-size: 15px;
+  }
+
+  .report-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #075e54;
+  }
+}
+
+/* =================================================
+   ⏱️ CHAT TIME – SMALL & CLEAN (WHATSAPP STYLE)
+================================================= */
+.msg-time {
+  font-size: 11px;
+  /* 🔥 chhota */
+  color: #667781;
+  /* WhatsApp grey */
+  text-align: right;
+  margin-top: 4px;
+  line-height: 1;
+}
+
+/* mobile pe bhi chhota hi rahe */
+@media (max-width: 600px) {
+  .msg-time {
+    font-size: 10px;
   }
 }

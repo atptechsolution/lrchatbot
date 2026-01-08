@@ -1,34 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>LR WhatsApp Chat</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="wa-container">
-      <!-- HEADER -->
-      <div class="wa-header">
-        <div class="wa-avatar">LR</div>
-        <div class="wa-title">
-          <div class="name" id="chatHeader">LR Support</div>
+<head>
+  <title>LR WhatsApp Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
-          <div class="status">online</div>
-        </div>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="chat.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <div class="wa-container">
+    <!-- HEADER (ADMIN JAISA LIVE BUTTON) -->
+    <div class="wa-header">
+      <div class="wa-avatar">LR</div>
+
+      <div class="wa-title">
+        <div class="name">LR Support</div>
+        <div class="status">online</div>
       </div>
 
-      <!-- CHAT BODY -->
-      <div id="chat" class="wa-chat-body"></div>
+      <!-- 🔥 LIVE BUTTON (KEY POINT) -->
+      <button onclick="showChat()" class="tab-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M1.5 4C0.947715 4 0.5 4.44772 0.5 5V19C0.5 19.5523 0.947715 20 1.5 20H19.5C20.0523 20 20.5 19.5523 20.5 19V7.79798L23.5 4H19.5H12.5H1.5ZM3.5 9.33333H17.5V10.6667H3.5V9.33333ZM13.5 13.3333H3.5V14.6667H13.5V13.3333Z"
+            fill="#FBFBFB" />
+        </svg>
 
-      <!-- INPUT -->
-      <div class="wa-input">
-        <input id="msg" placeholder="Type a message" />
-        <button onclick="send()">➤</button>
-      </div>
+
+
+      </button>
+
+      <button onclick="showLive()" class="tab-btn">
+
+        <svg width="6" height="20" viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M2.75 19.5C1.23122 19.5 0 18.2688 0 16.75C0 15.2312 1.23122 14 2.75 14C4.26878 14 5.5 15.2312 5.5 16.75C5.5 18.2688 4.26878 19.5 2.75 19.5Z"
+            fill="#EEF0F1" />
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M2.75 12.5C1.23122 12.5 0 11.2688 0 9.75C0 8.23122 1.23122 7 2.75 7C4.26878 7 5.5 8.23122 5.5 9.75C5.5 11.2688 4.26878 12.5 2.75 12.5Z"
+            fill="#EEF0F1" />
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M0 2.75C0 4.26878 1.23122 5.5 2.75 5.5C4.26878 5.5 5.5 4.26878 5.5 2.75C5.5 1.23122 4.26878 0 2.75 0C1.23122 0 0 1.23122 0 2.75Z"
+            fill="#EEF0F1" />
+        </svg>
+
+      </button>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="chat.js"></script>
-  </body>
+    <!-- SAME BODY FOR CHAT + LIVE (ADMIN STYLE) -->
+    <div id="chat" class="wa-chat-body"></div>
+
+    <!-- INPUT (ONLY CHAT MODE) -->
+    <div class="wa-input" id="chatInput">
+      <textarea id="msg" placeholder="Type a message" rows="1" onkeydown="handleKey(event)"></textarea>
+      <button onclick="send()">➤</button>
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="chat.js"></script>
+</body>
+
 </html>
