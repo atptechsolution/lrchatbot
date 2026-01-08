@@ -80,7 +80,7 @@ socket.on("adminMessage", (data) => {
     };
   }
 
-  users[data.userId].pdfs.unshift(data); // latest on top
+  users[data.userId].pdfs.unshift(data);
 
   if (mode === "live") renderLive();
   if (mode === "chat" && activeUser === data.userId) {
@@ -168,9 +168,6 @@ function exportReport() {
   if (from) url += `&from=${from}`;
   if (to) url += `&to=${to}`;
 
-  console.log("📤 EXPORT BUTTON CLICKED");
-  console.log("➡️ EXPORT URL:", url);
-
   window.open(url, "_blank");
 }
 
@@ -216,36 +213,6 @@ function renderLive() {
       </div>
     `;
   });
-
-  all.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  let lastDate = "";
-
-  all.forEach((p) => {
-    const label = formatDateLabel(p.createdAt);
-
-    if (label !== lastDate) {
-      chat.innerHTML += `<div class="date-separator">${label}</div>`;
-      lastDate = label;
-    }
-
-    chat.innerHTML += `
-      <div class="admin-msg">
-        <strong>${p.userName}</strong> (${p.userMobile})<br>
-
-        📝 <div class="full-msg">${p.message || "-"}</div>
-
-        🚚 <b>${p.truckNumber || "-"}</b> | ${p.weight || "-"}<br>
-
-        <div class="pdf-preview">
-          <iframe src="${p.pdfLink}"></iframe>
-        </div>
-
-        <a href="${p.pdfLink}" target="_blank">⬇ Download PDF</a>
-        <small>${formatISTTime(p.createdAt)}</small>
-      </div>
-    `;
-  });
 }
 
 /* =================================================
@@ -283,6 +250,21 @@ async function loadUsers() {
           </div>
         </div>
         <div class="user-actions">
+
+          <select onclick="event.stopPropagation()" onchange="changeTemplate('${
+            u._id
+          }', this.value)">
+            <option value="">Template</option>
+            <option value="av-logistics.ejs" ${
+              u.assignedTemplate === "av-logistics.ejs" ? "selected" : ""
+            }>A.V Logistics</option>
+            <option value="namaskarm-road-lines.ejs" ${
+              u.assignedTemplate === "namaskarm-road-lines.ejs"
+                ? "selected"
+                : ""
+            }>Namaskarm</option>
+          </select>
+
           ${
             !u.approved
               ? `<button onclick="approveUser('${u._id}', event)">✅</button>`
@@ -304,8 +286,21 @@ async function approveUser(id, e) {
 async function deleteUser(id, e) {
   e.stopPropagation();
   if (!confirm("Delete user?")) return;
-  await fetch(`/admin/delete/${id}`, { method: "DELETE" });
+  await fetch(`/admin/user/${id}`, { method: "DELETE" });
   loadUsers();
+}
+
+/* ---------------- TEMPLATE CHANGE ---------------- */
+async function changeTemplate(userId, template) {
+  if (!template) return;
+
+  await fetch(`/admin/template/${userId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ template }),
+  });
+
+  alert("✅ Template changed");
 }
 
 /* ---------------- USER CHAT ---------------- */
