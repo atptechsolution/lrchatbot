@@ -131,15 +131,16 @@ function renderLive() {
 
   chat.scrollTop = chat.scrollHeight;
 }
+
+/* ================= KEY HANDLER ================= */
 function handleKey(e) {
-  // ENTER → send message
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     send();
   }
 }
 
-/* ================= SEND ================= */
+/* ================= SEND (FIXED) ================= */
 function send() {
   if (mode !== "chat") return;
 
@@ -150,26 +151,17 @@ function send() {
   const chat = document.getElementById("chat");
   const now = new Date();
 
-  const label = getDateLabel(now);
-  const last = chat.querySelector(".chat-date:last-of-type")?.innerText;
+  const label = formatDateLabel(now);
+  const lastLabel = chat.querySelector(".chat-date:last-of-type")?.innerText;
 
-  if (label !== last) {
+  if (label !== lastLabel) {
     chat.innerHTML += `<div class="chat-date">${label}</div>`;
   }
 
   chat.innerHTML += `
     <div class="msg user">
       ${msg}
-      <div class="msg-time">${getTime(now)}</div>
-    </div>
-  `;
-
-  saveMessage("user", msg);
-
-  chat.innerHTML += `
-    <div class="msg user">
-      ${msg}
-      <div class="msg-time">${formatTime()}</div>
+      <div class="msg-time">${formatTime(now)}</div>
     </div>
   `;
 
@@ -180,12 +172,11 @@ function send() {
   chat.scrollTop = chat.scrollHeight;
 }
 
-/* ================= BOT MESSAGE (ERROR SAFE) ================= */
+/* ================= BOT MESSAGE ================= */
 socket.on("botMessage", (data) => {
   if (mode !== "chat") return;
 
   const chat = document.getElementById("chat");
-  const now = new Date();
 
   chat.innerHTML += `
     <div class="msg bot">
@@ -200,11 +191,9 @@ socket.on("botMessage", (data) => {
 
 /* ================= ADMIN MESSAGE ================= */
 socket.on("adminMessage", (data) => {
-  /* ---- LIVE (ALL USERS) ---- */
   livePDFs.unshift(data);
   localStorage.setItem(LIVE_KEY, JSON.stringify(livePDFs));
 
-  /* ---- CHAT (ONLY SAME USER) ---- */
   if (data.userMobile === mobile && mode === "chat") {
     const chat = document.getElementById("chat");
 
@@ -221,7 +210,6 @@ ${data.message || ""}
       </div>
     `;
 
-    // 🔥 FULL TEXT SAVE (PDF INCLUDED)
     saveMessage("bot", fullText);
     chat.scrollTop = chat.scrollHeight;
   }
