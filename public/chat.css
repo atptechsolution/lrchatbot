@@ -1,222 +1,181 @@
-const socket = io();
-const mobile = localStorage.getItem("mobile");
+/* =================================================
+   🔥 HARD FIX – CHAT MESSAGE LAYOUT
+   (FORCE VERTICAL STACK LIKE WHATSAPP)
+================================================= */
 
-window.addEventListener("load", () => {
-  if (!mobile) {
-    window.location.href = "/login.html";
-  }
-});
-
-const CHAT_KEY = `chat_history_${mobile}`;
-const LIVE_KEY = "live_pdfs_all_users";
-
-/* ================= STATE ================= */
-let mode = "chat"; // chat | live
-let livePDFs = [];
-
-/* ================= SAFE DATE HELPERS ================= */
-function toDateSafe(d) {
-  const date = d ? new Date(d) : new Date();
-  return isNaN(date.getTime()) ? new Date() : date;
+/* Chat body must stack messages vertically */
+.wa-chat-body {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
 }
 
-function formatTime(d) {
-  const date = toDateSafe(d);
-  return date.toLocaleTimeString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+/* =================================================
+   CHAT MESSAGE BUBBLES – WHATSAPP STYLE
+================================================= */
+
+.msg {
+    /* 🔥 FORCE EACH MESSAGE TO ITS OWN ROW */
+    align-self: flex-start;
+    display: inline-flex;
+
+    max-width: 65%;
+    width: fit-content;
+    min-width: 48px;
+
+    padding: 8px 12px 6px;
+    margin: 6px 0;
+
+    font-size: 14px;
+    line-height: 1.45;
+
+    border-radius: 10px;
+    position: relative;
+
+    flex-direction: column;
+
+    white-space: pre-line;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 
-function formatDateLabel(d) {
-  const date = toDateSafe(d);
+/* ===============================
+   SENT / USER MESSAGE
+================================ */
+.msg.user {
+    align-self: flex-end;
+    /* 🔥 RIGHT SIDE */
+    background-color: #016B5D;
+    color: #F7F7F8;
 
-  const today = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(today.getDate() - 1);
-
-  const dIST = date.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
-  const tIST = today.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
-  const yIST = yesterday.toLocaleDateString("en-IN", {
-    timeZone: "Asia/Kolkata",
-  });
-
-  if (dIST === tIST) return "Today";
-  if (dIST === yIST) return "Yesterday";
-
-  return date.toLocaleDateString("en-IN", {
-    timeZone: "Asia/Kolkata",
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
+    border-bottom-right-radius: 3px;
+    box-shadow: none;
 }
 
-/* ================= LOAD CHAT ================= */
-function loadChatFromStorage() {
-  const chat = document.getElementById("chat");
-  chat.innerHTML = "";
+/* ===============================
+   RECEIVED / BOT MESSAGE
+================================ */
+.msg.bot {
+    align-self: flex-start;
+    /* 🔥 LEFT SIDE */
+    background-color: #FCFEFB;
+    color: #606D75;
 
-  const saved = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-  let lastDate = "";
+    border-bottom-left-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
 
-  saved.forEach((m) => {
-    const label = formatDateLabel(m.time);
-    if (label !== lastDate) {
-      chat.innerHTML += `<div class="chat-date">${label}</div>`;
-      lastDate = label;
+/* ===============================
+   LINKS
+================================ */
+.msg a {
+    color: #0b846d;
+    font-weight: 500;
+    text-decoration: underline;
+}
+
+.msg.user a {
+    color: #e9fffb;
+}
+
+/* ===============================
+   TIMESTAMP
+================================ */
+.msg-time {
+    align-self: flex-end;
+    margin-top: 4px;
+
+    font-size: 11px;
+    line-height: 1;
+    opacity: 0.75;
+
+    white-space: nowrap;
+    user-select: none;
+}
+
+.msg.user .msg-time {
+    color: rgba(247, 247, 248, 0.85);
+}
+
+.msg.bot .msg-time {
+    color: #667781;
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 600px) {
+    .msg {
+        max-width: 85%;
+        font-size: 13px;
     }
 
-    chat.innerHTML += `
-      <div class="msg ${m.type}">
-        ${m.text}
-        <div class="msg-time">${formatTime(m.time)}</div>
-      </div>
-    `;
-  });
-
-  chat.scrollTop = chat.scrollHeight;
+    .msg-time {
+        font-size: 10px;
+    }
 }
 
-/* ================= SAVE MESSAGE ================= */
-function saveMessage(type, text) {
-  const saved = JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-  saved.push({ type, text, time: new Date().toISOString() });
-  localStorage.setItem(CHAT_KEY, JSON.stringify(saved));
+
+/* =========================================
+   HEADER ICON BUTTONS (CHAT / LIVE)
+========================================= */
+
+.tab-btn {
+    width: 36px;
+    height: 36px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-/* ================= LOAD LIVE ================= */
-function loadLiveFromStorage() {
-  livePDFs = JSON.parse(localStorage.getItem(LIVE_KEY) || "[]");
+/* SVG sizing fix */
+.tab-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
-/* ================= CHAT MODE ================= */
-function showChat() {
-  mode = "chat";
-  document.getElementById("chatInput").style.display = "flex";
-  loadChatFromStorage();
+/* Hover effect (WhatsApp style) */
+.tab-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* ================= LIVE MODE ================= */
-function showLive() {
-  mode = "live";
-  document.getElementById("chatInput").style.display = "none";
-  renderLive();
+/* Active / pressed */
+.tab-btn:active {
+    background-color: rgba(255, 255, 255, 0.25);
+    transform: scale(0.96);
 }
 
-function renderLive() {
-  const chat = document.getElementById("chat");
-  chat.innerHTML = `<h3>⚡ Live PDFs</h3>`;
+/* Focus (keyboard accessibility) */
+.tab-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
 
-  let lastDate = "";
+/* Optional: active state (if you add class via JS later) */
+.tab-btn.active {
+    background-color: rgba(255, 255, 255, 0.25);
+}
 
-  livePDFs.forEach((p) => {
-    const label = formatDateLabel(p.createdAt);
-    if (label !== lastDate) {
-      chat.innerHTML += `<div class="chat-date">${label}</div>`;
-      lastDate = label;
+/* Mobile touch comfort */
+@media (max-width: 600px) {
+    .tab-btn {
+        width: 40px;
+        height: 40px;
     }
 
-    chat.innerHTML += `
-      <div class="msg bot">
-        <strong>${p.userName || "User"}</strong> (${p.userMobile || "-"})<br>
-        📝 ${p.message || "-"}<br>
-        🚚 <b>${p.truckNumber || "-"}</b> | ${p.weight || "-"}<br>
-        📄 <a href="${p.pdfLink}" target="_blank">Download PDF</a>
-        <div class="msg-time">${formatTime(p.createdAt)}</div>
-      </div>
-    `;
-  });
-
-  chat.scrollTop = chat.scrollHeight;
+    .tab-btn svg {
+        width: 22px;
+        height: 22px;
+    }
 }
-
-/* ================= KEY HANDLER ================= */
-function handleKey(e) {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    send();
-  }
-}
-
-/* ================= SEND (FIXED) ================= */
-function send() {
-  if (mode !== "chat") return;
-
-  const input = document.getElementById("msg");
-  const msg = input.value.trim();
-  if (!msg) return;
-
-  const chat = document.getElementById("chat");
-  const now = new Date();
-
-  const label = formatDateLabel(now);
-  const lastLabel = chat.querySelector(".chat-date:last-of-type")?.innerText;
-
-  if (label !== lastLabel) {
-    chat.innerHTML += `<div class="chat-date">${label}</div>`;
-  }
-
-  chat.innerHTML += `
-    <div class="msg user">
-      ${msg}
-      <div class="msg-time">${formatTime(now)}</div>
-    </div>
-  `;
-
-  saveMessage("user", msg);
-  socket.emit("userMessage", { mobile, message: msg });
-
-  input.value = "";
-  chat.scrollTop = chat.scrollHeight;
-}
-
-/* ================= BOT MESSAGE ================= */
-socket.on("botMessage", (data) => {
-  if (mode !== "chat") return;
-
-  const chat = document.getElementById("chat");
-
-  chat.innerHTML += `
-    <div class="msg bot">
-      ${data.text}
-      <div class="msg-time">${formatTime()}</div>
-    </div>
-  `;
-
-  saveMessage("bot", data.text);
-  chat.scrollTop = chat.scrollHeight;
-});
-
-/* ================= ADMIN MESSAGE ================= */
-socket.on("adminMessage", (data) => {
-  livePDFs.unshift(data);
-  localStorage.setItem(LIVE_KEY, JSON.stringify(livePDFs));
-
-  if (data.userMobile === mobile && mode === "chat") {
-    const chat = document.getElementById("chat");
-
-    const fullText = `
-${data.message || ""}
-🚚 ${data.truckNumber || "-"} | ${data.weight || "-"}
-📄 <a href="${data.pdfLink}" target="_blank">Download PDF</a>
-    `;
-
-    chat.innerHTML += `
-      <div class="msg bot">
-        ${fullText}
-        <div class="msg-time">${formatTime(data.createdAt)}</div>
-      </div>
-    `;
-
-    saveMessage("bot", fullText);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  if (mode === "live") renderLive();
-});
-
-/* ================= INIT ================= */
-loadLiveFromStorage();
-showChat();
