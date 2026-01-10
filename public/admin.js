@@ -103,6 +103,7 @@ function showReport() {
         <option value="all">All Templates</option>
         <option value="av-logistics.ejs">A.V Logistics</option>
         <option value="namaskarm-road-lines.ejs">Namaskarm</option>
+        <option value="maruti.ejs">Maruti</option>
       </select>
       <input type="date" id="fromDate">
       <input type="date" id="toDate">
@@ -263,6 +264,9 @@ async function loadUsers() {
                 ? "selected"
                 : ""
             }>Namaskarm</option>
+            <option value="maruti.ejs" ${
+              u.assignedTemplate === "maruti.ejs" ? "selected" : ""
+            }>Maruti</option>
           </select>
 
           ${
