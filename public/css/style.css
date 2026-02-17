@@ -1,0 +1,144 @@
+/* ── Reset ── */
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0;width:100%;height:100%;overflow-x:hidden}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#ece5dd}
+
+/* ── Theme ── */
+:root{
+  --green:#075e54;
+  --green-dk:#054640;
+  --accent:#25d366;
+  --bg:#ece5dd;
+  --border:#e0e0e0;
+}
+
+/* ═══════════════════════════
+   AUTH (Login / Signup)
+═══════════════════════════ */
+.auth-wrapper{min-height:100svh;width:100%;display:flex;flex-direction:column;background:var(--bg)}
+.auth-box{width:100%;height:100%;display:flex;flex-direction:column}
+.auth-header{background:var(--green);color:#fff;padding:16px;font-size:18px;text-align:center;font-weight:600}
+.auth-body{flex:1;background:#fff;padding:24px 16px}
+.auth-body input{width:100%;padding:12px;font-size:15px;margin-bottom:14px;border-radius:6px;border:1px solid #ccc;outline:none}
+.auth-body input:focus{border-color:var(--green)}
+.auth-body button{width:100%;padding:12px;border-radius:24px;border:none;background:var(--green);color:#fff;font-size:15px;cursor:pointer}
+.auth-msg,.auth-footer{text-align:center;margin-top:12px;font-size:14px}
+.auth-footer a{color:var(--green);font-weight:600;text-decoration:none}
+
+/* ═══════════════════════════
+   CHAT CONTAINER
+═══════════════════════════ */
+.wa-container{width:100%;height:100svh;display:flex;flex-direction:column;background:#fff}
+
+/* ── Header ── */
+.wa-header{background:var(--green);color:#fff;display:flex;align-items:center;gap:10px;padding:10px 12px;flex-shrink:0}
+.wa-avatar{width:38px;height:38px;border-radius:50%;background:var(--green-dk);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
+.wa-title .name{font-size:15px;font-weight:bold}
+.wa-title .status{font-size:12px;opacity:.8}
+.wa-title{flex:1}
+
+.tab-btn{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:none;border-radius:50%;cursor:pointer;padding:0;transition:background .2s,transform .1s}
+.tab-btn svg{width:20px;height:20px;display:block}
+.tab-btn:hover{background:rgba(255,255,255,.15)}
+.tab-btn:active{background:rgba(255,255,255,.25);transform:scale(.96)}
+
+/* ── Chat body ── */
+.wa-chat-body{flex:1;background:var(--bg);padding:10px;overflow-y:auto;display:flex;flex-direction:column;align-items:stretch}
+
+/* ── Date separator ── */
+.chat-date{display:block;text-align:center;margin:14px auto;padding:4px 16px;font-size:12px;font-weight:600;background:#e1f3fb;color:var(--green);border-radius:12px;width:fit-content}
+
+/* ═══════════════════════════
+   MESSAGE BUBBLES
+═══════════════════════════ */
+.msg{max-width:72%;width:fit-content;padding:8px 12px 5px;margin:4px 0;font-size:14px;line-height:1.45;border-radius:10px;position:relative;display:inline-flex;flex-direction:column;white-space:pre-line;word-break:break-word;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:#016B5D;color:#f7f7f8;border-bottom-right-radius:3px}
+.msg.bot{align-self:flex-start;background:#fff;color:#303030;border-bottom-left-radius:3px;box-shadow:0 1px 2px rgba(0,0,0,.1)}
+.msg a{color:#0b846d;font-weight:500;text-decoration:underline}
+.msg.user a{color:#e9fffb}
+
+/* Timestamp */
+.msg-time{align-self:flex-end;margin-top:3px;font-size:11px;opacity:.7;white-space:nowrap;user-select:none}
+
+/* PDF card inside bot message */
+.pdf-card{background:#f0faf7;border:1px solid #c3e6da;border-radius:8px;padding:10px 12px;margin-top:6px;display:flex;flex-direction:column;gap:6px}
+.pdf-card .lr-info{font-size:13px;color:#333;line-height:1.6}
+.pdf-card .lr-info b{color:var(--green)}
+.pdf-card .pdf-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.pdf-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;text-decoration:none;border:none;cursor:pointer;transition:opacity .2s}
+.pdf-btn.download{background:var(--green);color:#fff}
+.pdf-btn.share{background:#128C7E;color:#fff}
+.pdf-btn:hover{opacity:.85}
+.pdf-btn svg{width:14px;height:14px}
+
+/* ── Input bar ── */
+.wa-input{display:flex;align-items:flex-end;gap:8px;padding:8px 10px;background:#f0f2f5;flex-shrink:0}
+.wa-input textarea{flex:1;resize:none;border:none;border-radius:20px;padding:10px 14px;font-size:14px;outline:none;line-height:1.4;max-height:140px;overflow-y:auto;font-family:inherit;background:#fff}
+.wa-input button{width:42px;height:42px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wa-input button:hover{background:#1da851}
+
+/* ═══════════════════════════
+   ADMIN
+═══════════════════════════ */
+.admin-top{display:flex;justify-content:space-between;gap:6px;padding:8px;background:var(--green)}
+.admin-top .tab-btn{flex:1;width:auto;height:auto;background:rgba(255,255,255,.15);color:#fff;border:none;padding:10px 4px;font-size:13px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.admin-top .tab-btn.active{background:#fff;color:var(--green);font-weight:600}
+.admin-top .tab-btn:hover{background:rgba(255,255,255,.25)}
+
+.wa-sidebar{width:100%;background:#fff;overflow-y:auto}
+.wa-chat{flex:1;background:var(--bg);display:flex;flex-direction:column}
+.empty-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#aaa;font-size:14px;text-align:center;gap:8px;padding:20px}
+
+/* User cards */
+.user-card{background:#fff;width:calc(100% - 16px);margin:8px;padding:12px;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer}
+.user-info{flex:1;display:flex;align-items:center;gap:12px}
+.user-card .avatar{width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;font-size:16px;font-weight:bold;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-info .details strong{font-size:14px;display:block}
+.user-info .details small{font-size:12px;color:#666}
+.user-card .user-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.template-dd{font-size:12px;padding:5px 6px;border-radius:6px;border:1px solid #ccc;background:#fafafa;outline:none}
+.icon-btn{border:none;background:#f2f2f2;padding:7px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;transition:background .15s}
+.icon-btn:hover{background:#e0e0e0}
+.icon-btn.approve{color:#2ecc71}
+.icon-btn.danger{color:#e74c3c}
+
+/* Admin live/chat messages */
+.admin-msg{background:#fff;padding:12px;border-radius:10px;margin:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);font-size:13px;line-height:1.6}
+.admin-msg .msg-actions{display:flex;gap:8px;margin-top:8px}
+.admin-msg iframe{width:100%;height:200px;border:none;border-radius:6px;margin-top:8px}
+.admin-msg .dl-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:16px;background:var(--green);color:#fff;font-size:12px;text-decoration:none;font-weight:600}
+.admin-msg .dl-btn:hover{opacity:.85}
+.back-btn{background:var(--green);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;margin:8px}
+
+/* ── Reports ── */
+#adminChat{width:100%;padding:16px;box-sizing:border-box}
+#adminChat h3{margin:0 0 16px;font-size:18px;font-weight:700}
+.report-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;padding:16px;background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.report-filters select,.report-filters input{padding:8px 10px;font-size:13px;border-radius:6px;border:1px solid #ccc;outline:none;min-width:160px}
+.report-filters button{padding:8px 16px;font-size:13px;border-radius:6px;border:none;background:var(--green);color:#fff;cursor:pointer}
+.report-filters .export-btn{background:var(--accent);font-weight:600}
+#reportTable{width:100%;overflow-x:auto}
+.report-table{width:100%;border-collapse:collapse;background:#fff;font-size:13px}
+.report-table th{background:#f5f5f5;text-align:left;padding:10px;font-weight:600;border-bottom:1px solid #ddd}
+.report-table td{padding:10px;border-bottom:1px solid #eee}
+
+/* ── Mobile ── */
+@media(max-width:600px){
+  .msg{max-width:85%;font-size:13px}
+  .wa-input button{width:40px;height:40px}
+  .admin-top .tab-btn{font-size:12px;padding:9px 0}
+  .user-card{padding:10px}
+  .template-dd{font-size:11px}
+  .report-filters select,.report-filters input{min-width:100%;width:100%}
+  .report-filters button{width:100%}
+  .report-filters{flex-direction:column}
+  .report-table thead{display:none}
+  .report-table,.report-table tbody,.report-table tr,.report-table td{display:block;width:100%}
+  .report-table tr{margin-bottom:12px;border-radius:8px;padding:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  .report-table td{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border:none;font-size:13px}
+  .report-table td::before{content:attr(data-label);font-weight:600;color:var(--green)}
+}
+
+@supports(height:100dvh){
+  .auth-wrapper,.wa-container{min-height:100dvh;height:100dvh}
+}

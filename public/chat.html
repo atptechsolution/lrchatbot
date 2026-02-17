@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LR Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="wa-container">
+
+    <!-- Header -->
+    <div class="wa-header">
+      <div class="wa-avatar">LR</div>
+      <div class="wa-title">
+        <div class="name">LR Support</div>
+        <div class="status">online</div>
+      </div>
+
+      <!-- Chat tab -->
+      <button class="tab-btn" onclick="showChat()" title="Chats">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M1.5 4C.948 4 .5 4.448.5 5v14c0 .552.448 1 1 1H19.5c.552 0 1-.448 1-1V7.798L23.5 4h-4H12.5H1.5zm2 5.333h14v1.334h-14V9.333zm10 4H3.5v1.334H13.5V13.333z"
+            fill="#FBFBFB"/>
+        </svg>
+      </button>
+
+      <!-- Live tab -->
+      <button class="tab-btn" onclick="showLive()" title="Live PDFs">
+        <svg viewBox="0 0 6 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="2.75" cy="16.75" r="2.75" fill="#EEF0F1"/>
+          <circle cx="2.75" cy="9.75" r="2.75" fill="#EEF0F1"/>
+          <circle cx="2.75" cy="2.75" r="2.75" fill="#EEF0F1"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div id="chat" class="wa-chat-body"></div>
+
+    <!-- Input -->
+    <div class="wa-input" id="chatInput">
+      <textarea id="msg" placeholder="Type LR details here..." rows="1"
+        onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button onclick="send()" title="Send">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
+          <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>
