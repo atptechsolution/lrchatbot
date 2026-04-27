@@ -18,6 +18,12 @@ const chatSchema = new mongoose.Schema(
     pdfLink: String,
     time: String,
     templateName: String,
+    
+    // Receipt logic
+    receiptNo: { type: Number },
+    status: { type: String, default: 'success' },
+    rate: { type: Number },
+    amount: { type: Number }
   },
   {
     timestamps: true,
