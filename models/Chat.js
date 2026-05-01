@@ -18,16 +18,21 @@ const chatSchema = new mongoose.Schema(
     pdfLink: String,
     time: String,
     templateName: String,
-    
+
     // Receipt logic
     receiptNo: { type: Number },
     status: { type: String, default: 'success' },
     rate: { type: Number },
-    amount: { type: Number }
+    amount: { type: Number },
+
+    // Edit tracking
+    isEdited: { type: Boolean, default: false },
+    editedBy: { type: String },
+    editedAt: { type: Date },
   },
   {
     timestamps: true,
-    strict: true, // 🔥 important (debug ke liye)
+    strict: true,
   }
 );
 

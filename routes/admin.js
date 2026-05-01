@@ -10,9 +10,14 @@ router.post('/template/:id', ctrl.changeTemplate);
 router.post('/role/:id', ctrl.changeRole);
 router.delete('/user/:id', ctrl.deleteUser);
 
+// Builty actions
+router.patch('/chat/:id/cancel', ctrl.cancelBuilty);
+router.patch('/chat/:id/edit', ctrl.editBuilty);
+
 // Rates
 router.get('/rates', ctrl.getRates);
 router.post('/rates', ctrl.createRate);
+router.put('/rates/:id', ctrl.updateRate);
 router.delete('/rates/:id', ctrl.deleteRate);
 
 router.get('/report/preview', ctrl.reportPreview);

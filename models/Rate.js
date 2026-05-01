@@ -5,6 +5,7 @@ const rateSchema = new mongoose.Schema({
   to: { type: String, required: true },
   itemKeyword: { type: String, required: true },
   ratePerTon: { type: Number, required: true },
+  party: { type: String, default: 'All' },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Rate", rateSchema);

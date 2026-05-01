@@ -18,10 +18,10 @@ async function signup(req, res) {
 
 async function login(req, res) {
   const { mobile, password } = req.body;
-  
+
   if (mobile === ADMIN_MOBILE) {
     if (password !== 'admin123') return res.json({ msg: 'Invalid password' });
-    return res.json({ role: 'admin' });
+    return res.json({ role: 'admin', name: 'Admin' });
   }
 
   const user = await User.findOne({ mobile });
@@ -31,7 +31,7 @@ async function login(req, res) {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) return res.json({ msg: 'Invalid password' });
 
-  res.json({ role: user.role });
+  res.json({ role: user.role, name: user.name, userId: user._id.toString() });
 }
 
 module.exports = { signup, login };
