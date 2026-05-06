@@ -22,39 +22,54 @@ function getIST() {
   };
 }
 
+function isWithinEditWindow(createdAt) {
+  return (Date.now() - new Date(createdAt).getTime()) < 8 * 60 * 60 * 1000;
+}
+
 async function handleUserMessage(socket, io, { mobile, message }, appRoot) {
   try {
-    const user = await User.findOne({ mobile });
+    const user = await User.findOne({ mobile }).lean();
     if (!user || !user.approved) return;
 
     const lowerMsg = message.toLowerCase().trim();
 
-    // Check for cancel command
+    // Cancel command — only subadmin/admin/manager, not regular users
     if (lowerMsg.startsWith('cancel ')) {
+      if (user.role === 'user') {
+        socket.emit('botMessage', { text: '❌ You do not have permission to cancel receipts.' });
+        return;
+      }
       const receiptNoStr = lowerMsg.replace('cancel ', '').trim();
       const receiptNo = parseInt(receiptNoStr, 10);
       if (!isNaN(receiptNo)) {
-        const chat = await Chat.findOne({ receiptNo, userMobile: mobile });
-        if (chat) {
-          if (chat.status === 'canceled') {
-            socket.emit('botMessage', { text: `⚠️ Receipt No ${receiptNo} is already canceled.` });
-            return;
-          }
-          chat.status = 'canceled';
-          await chat.save();
-          socket.emit('botMessage', { text: `✅ Receipt No ${receiptNo} has been canceled successfully.` });
-          io.emit('adminMessage', { type: 'refresh' }); // Trigger admin UI refresh if needed
-          return;
-        } else {
-          socket.emit('botMessage', { text: `❌ Receipt No ${receiptNo} not found or you don't have permission to cancel it.` });
+        const chat = await Chat.findOne({ receiptNo });
+        if (!chat) {
+          socket.emit('botMessage', { text: `❌ Receipt #${receiptNo} not found.` });
           return;
         }
+        if (chat.status === 'canceled') {
+          socket.emit('botMessage', { text: `⚠️ Receipt #${receiptNo} is already cancelled.` });
+          return;
+        }
+        if (user.role === 'subadmin' || user.role === 'manager') {
+          if (chat.userMobile !== mobile) {
+            socket.emit('botMessage', { text: '❌ You can only cancel your own receipts.' });
+            return;
+          }
+          if (!isWithinEditWindow(chat.createdAt)) {
+            socket.emit('botMessage', { text: '❌ Cannot cancel after 8 hours of generation.' });
+            return;
+          }
+        }
+        chat.status = 'canceled';
+        await chat.save();
+        socket.emit('botMessage', { text: `✅ Receipt #${receiptNo} cancelled successfully.` });
+        return;
       }
     }
 
     const lr = await extractDetails(message);
 
-    /* Validation */
     const missing = [];
     if (!lr.truckNumber) missing.push('Truck Number');
     if (!lr.to) missing.push('Destination (To)');
@@ -67,15 +82,12 @@ async function handleUserMessage(socket, io, { mobile, message }, appRoot) {
           missing.map(m => `• ${m}`).join('\n') +
           `\n\nPlease resend like:\nMH09HH4512 24 ton Plastic Dana Indore to Nagpur`,
       });
-
       io.emit('adminMessage', {
         userId: user._id.toString(),
         userName: user.name,
         userMobile: user.mobile,
-        message: `⚠️ LR INCOMPLETE\n\nOriginal Message:\n"${message}"\n\nMissing Details:\n` +
-          missing.map(m => `• ${m}`).join('\n'),
+        message: `⚠️ LR INCOMPLETE — "${message}" — Missing: ${missing.join(', ')}`,
         truckNumber: '-',
-        weight: '-',
         pdfLink: '',
         templateName: user.assignedTemplate,
         createdAt: new Date().toISOString(),
@@ -87,44 +99,39 @@ async function handleUserMessage(socket, io, { mobile, message }, appRoot) {
     const { date: istDate, time: istTime } = getIST();
     const logoPath = getLogoPath(user.assignedTemplate, appRoot);
 
-    const pdfFile = await generatePdf(user.assignedTemplate, {
-      truckNumber: lr.truckNumber,
-      from: lr.from || '',
-      to: lr.to || '',
-      weight: lr.weight,
-      description: lr.description,
-      date: istDate,
-      time: istTime,
-      logoPath,
-    });
+    // Generate PDF and auto-increment receipt in parallel with rate lookup
+    const [pdfFile, lastChat, rates] = await Promise.all([
+      generatePdf(user.assignedTemplate, {
+        truckNumber: lr.truckNumber,
+        from: lr.from || '',
+        to: lr.to || '',
+        weight: lr.weight,
+        description: lr.description,
+        date: istDate,
+        time: istTime,
+        logoPath,
+      }),
+      Chat.findOne().sort({ receiptNo: -1 }).select('receiptNo').lean(),
+      Rate.find().lean(),
+    ]);
 
-    // Auto-increment receiptNo
-    const lastChat = await Chat.findOne().sort({ receiptNo: -1 });
-    const nextReceiptNo = lastChat && lastChat.receiptNo ? lastChat.receiptNo + 1 : 1000;
+    const nextReceiptNo = (lastChat && lastChat.receiptNo) ? lastChat.receiptNo + 1 : 1000;
 
-    // Rate Calculation
     let calculatedRate = null;
     let calculatedAmount = null;
-
     if (lr.from && lr.to && lr.description && lr.weight) {
-      // Find matching rates
-      const rates = await Rate.find();
-      let matchedRate = null;
       for (const r of rates) {
-        if (lr.from.toLowerCase() === r.from.toLowerCase() && 
-            lr.to.toLowerCase() === r.to.toLowerCase() && 
-            lr.description.toLowerCase().includes(r.itemKeyword.toLowerCase())) {
-          matchedRate = r;
+        const partyMatch = !r.party || r.party === 'All' || r.party === user.name;
+        if (
+          partyMatch &&
+          lr.from.toLowerCase() === r.from.toLowerCase() &&
+          lr.to.toLowerCase() === r.to.toLowerCase() &&
+          lr.description.toLowerCase().includes(r.itemKeyword.toLowerCase())
+        ) {
+          calculatedRate = r.ratePerTon;
+          const wKg = parseFloat(lr.weight);
+          if (!isNaN(wKg)) calculatedAmount = Math.round((wKg / 1000) * calculatedRate);
           break;
-        }
-      }
-
-      if (matchedRate) {
-        calculatedRate = matchedRate.ratePerTon;
-        let wKg = parseFloat(lr.weight);
-        if (!isNaN(wKg)) {
-          let wTon = wKg / 1000;
-          calculatedAmount = Math.round(wTon * calculatedRate);
         }
       }
     }
@@ -144,28 +151,17 @@ async function handleUserMessage(socket, io, { mobile, message }, appRoot) {
       receiptNo: nextReceiptNo,
       status: 'success',
       rate: calculatedRate,
-      amount: calculatedAmount
+      amount: calculatedAmount,
     };
 
-    await Chat.create(payload);
+    const saved = await Chat.create(payload);
+    const responsePayload = { ...payload, _id: saved._id.toString(), createdAt: saved.createdAt.toISOString() };
 
-    /* Send to user — NO "Generated Successfully" toast, just PDF link */
-    socket.emit('botMessage', {
-      pdfLink: payload.pdfLink,
-      pdfName: `${lr.truckNumber}.pdf`,
-      truckNumber: lr.truckNumber,
-      from: lr.from || '',
-      to: lr.to || '',
-      weight: lr.weight,
-      description: lr.description,
-      receiptNo: nextReceiptNo,
-      status: 'success'
-    });
-
-    io.emit('adminMessage', payload);
+    socket.emit('botMessage', responsePayload);
+    io.emit('adminMessage', responsePayload);
   } catch (err) {
     console.error('LR error:', err);
-    socket.emit('botMessage', { text: '❌ Server error. Please try again later.' });
+    socket.emit('botMessage', { text: '❌ Server error. Please try again.' });
   }
 }
 
